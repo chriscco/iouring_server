@@ -1,5 +1,4 @@
 #pragma once
-#include <linux/io_uring.h>
 #include <liburing.h>
 #include <cstring>
 #include <sys/socket.h>
@@ -63,7 +62,7 @@ IO_Uring_Handler::IO_Uring_Handler(unsigned entries, int sock_fd) {
      * 但是在没有任务时线程会闲置
      */
     if (!(params.features & IORING_FEAT_FAST_POLL)) {
-        printf("IORING_FEAT_FAST_POLL is not supported\n");
+        printf("IO_ring_FEAT_FAST_POLL is not supported\n");
         exit(0);
     }
 
@@ -101,7 +100,8 @@ void IO_Uring_Handler::setup_first_buffer() {
     
     errif(cqe->res < 0, "cqe->res < 0");
 
-    io_uring_queue_exit(&_ring);
+    /* 将取得的cqe任务设为seen */
+    io_uring_cqe_seen(&_ring, cqe);
 }
 
 void IO_Uring_Handler::event_loop(Task handle_event(int)) {
@@ -204,4 +204,3 @@ void IO_Uring_Handler::add_buffer_request(request& req) {
 }
 
 void IO_Uring_Handler::add_open_request() {};
-

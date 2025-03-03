@@ -21,7 +21,7 @@ private:
 void Server::setup_listening_socket(int port) {
     struct sockaddr_in server_addr;
 
-    _sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    _sockfd = socket(PF_INET, SOCK_STREAM, 0);
     errif(_sockfd == -1, "socket error");
     int enable = 1;
     errif(setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, 
@@ -32,7 +32,7 @@ void Server::setup_listening_socket(int port) {
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    errif(bind(_sockfd, (const struct sockaddr* )&server_addr, sizeof(server_addr)),
+    errif(bind(_sockfd, (const struct sockaddr*)&server_addr, sizeof(server_addr)),
             "error in bind");
     errif(listen(_sockfd, SOMAXCONN) == -1, "error in listen");
 }
@@ -52,6 +52,7 @@ Task handle_http_request(int fd) {
 
     conn.handle_request(read_buffer);
     size_t write_bytes = co_await write_socket(read_buffer, conn.get_response_size());
+    printf("write_buffer %lu %s", write_bytes, read_buffer);
     co_await shutdown_socket(fd);
     co_return;
 }
