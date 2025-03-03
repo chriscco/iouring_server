@@ -11,5 +11,6 @@ include_directories(/usr/include)
 link_libraries(uring)
 
 add_executable(server main.cpp)
+add_executable(client client.cpp)
 
 target_link_libraries(server uring)

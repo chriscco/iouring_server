@@ -21,7 +21,7 @@ private:
 void Server::setup_listening_socket(int port) {
     struct sockaddr_in server_addr;
 
-    _sockfd = socket(PF_INET, SOCK_STREAM, 0);
+    _sockfd = socket(AF_INET, SOCK_STREAM, 0);
     errif(_sockfd == -1, "socket error");
     int enable = 1;
     errif(setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, 
